@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Apostas</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to top, green, white);
+            font-family: 'Comic Neue', cursive;
+        }
+        .container {
+            text-align: center;
+        }
+        .squares {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .square {
+            width: 100px;
+            height: 100px;
+            background-color: black;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #message {
+            font-size: 24px;
+            margin-top: 20px;
+            display: none;
+        }
+        #timer {
+            font-size: 18px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="squares">
+            <div class="square" id="square1"></div>
+            <div class="square" id="square2"></div>
+            <div class="square" id="square3"></div>
+        </div>
+        <button onclick="apostar()">Apostar</button>
+        <div id="message">Por 4 minutos e 11 segundos, Hakari é efetivamente IMORTAL</div>
+        <div id="timer">4:11</div>
+    </div>
+
+    <audio id="audio" src="https://rr2---sn-bg0s7n76.googlevideo.com/videoplayback?expire=1721623413&ei=FY-dZvnFJN-ai9oP-q29sAo&ip=154.92.120.65&id=o-APY5z9SP0Wr7wDjRFE9mThrk1XefxHRXIqPHApXulsoJ&itag=249&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AXc671KEwYb8XI8HVxBT2dltw9ODBMHx0v7-8BuesLH-uvPQGbPZBwk624GCwkfreqfd-f_iLez8hqcW&vprv=1&mime=audio%2Fwebm&rqh=1&gir=yes&clen=203136&dur=34.921&lmt=1715514127486294&keepalive=yes&c=ANDROID_CREATOR&txp=4532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cvprv%2Cmime%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRgIhAI2OkrMTEF1oPIOfLRw3zZa8cofkQ6R2a_WzylyOOjaPAiEAxWFuvR7bWxHAAo1inKjll5r-w3tV4awAZVmQHHdPBUk%3D&rm=sn-4g5edr7s&rrc=104,80&fexp=24350516,24350518&req_id=e7b291d5a4dda3ee&ipbypass=yes&redirect_counter=2&cm2rm=sn-oxunxg8pjvn-bg0rz7d&cms_redirect=yes&cmsv=e&mh=bR&mip=186.204.63.50&mm=29&mn=sn-bg0s7n76&ms=rdu&mt=1721601649&mv=m&mvi=2&pl=22&lsparams=ipbypass,mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AHlkHjAwRAIgXfbqIP_X3pfKNMEtTihq0yhMb9Hqj0PV6KvVxTRSIR8CIDYVihG0vovAlHzkigIVb_BK9QtxpBiPezQXn9wODwR6"></audio>
+
+    <script>
+        const images = [
+            "https://i.imgur.com/uQnEzbb.png",
+            "https://i.imgur.com/A9rNOGN.png",
+            "https://i.imgur.com/dTlYHE9.png",
+            "https://i.imgur.com/QasDsPI.png"
+        ];
+
+        let animationInterval;
+        let animationTimeout;
+
+        function apostar() {
+            clearInterval(animationInterval);
+            clearTimeout(animationTimeout);
+
+            const squares = [document.getElementById('square1'), document.getElementById('square2'), document.getElementById('square3')];
+            const results = [];
+
+            animationInterval = setInterval(() => {
+                squares.forEach(square => {
+                    const randomImage = images[Math.floor(Math.random() * images.length)];
+                    square.style.backgroundImage = `url(${randomImage})`;
+                    square.style.backgroundSize = 'cover';
+                });
+            }, 100);
+
+            animationTimeout = setTimeout(() => {
+                clearInterval(animationInterval);
+
+                squares.forEach(square => {
+                    const randomImage = images[Math.floor(Math.random() * images.length)];
+                    square.style.backgroundImage = `url(${randomImage})`;
+                    square.style.backgroundSize = 'cover';
+                    results.push(randomImage);
+                });
+
+                if (results.every(image => image === "https://i.imgur.com/A9rNOGN.png")) {
+                    document.getElementById('audio').play();
+                    document.getElementById('message').style.display = 'block';
+                    document.getElementById('timer').style.display = 'block';
+                    startTimer();
+                }
+            }, 3000);
+        }
+
+        function startTimer() {
+            let duration = 251; // 4 minutes and 11 seconds
+            const timerElement = document.getElementById('timer');
+            const audioElement = document.getElementById('audio');
+
+            const interval = setInterval(() => {
+                let minutes = Math.floor(duration / 60);
+                let seconds = duration % 60;
+
+                minutes = minutes < 10 ? `0${minutes}` : minutes;
+                seconds = seconds < 10 ? `0${seconds}` : seconds;
+
+                timerElement.textContent = `${minutes}:${seconds}`;
+                
+                if (--duration < 0) {
+                    clearInterval(interval);
+                    document.getElementById('message').style.display = 'none';
+                    document.getElementById('timer').style.display = 'none';
+                    audioElement.pause();
+                    audioElement.currentTime = 0;
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
